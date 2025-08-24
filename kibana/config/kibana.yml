@@ -9,3 +9,4 @@ monitoring.ui.container.logstash.enabled: true
 #
 elasticsearch.username: kibana_system
 elasticsearch.password: ${KIBANA_SYSTEM_PASSWORD}
+xpack.fleet.enabled: false
