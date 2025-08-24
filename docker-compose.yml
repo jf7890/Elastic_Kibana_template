@@ -75,10 +75,10 @@ services:
       - elasticsearch
     restart: unless-stopped
 
-  networks:
+networks:
   elk:
     driver: bridge
 
 volumes:
-elasticsearch:
+  elasticsearch:
     
