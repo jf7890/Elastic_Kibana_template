@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
- setup:
+  setup:
     profiles:
       - setup
     build:
@@ -26,39 +26,39 @@ services:
     depends_on:
       - elasticsearch
 
-    kibana-genkeys:
-      profiles:
-        - setup
-      build:
-        context: kibana/
-        args:
-          ELASTIC_VERSION: ${ELASTIC_VERSION}
-      command:
-        - bin/kibana-encryption-keys
-        - generate
-      network_mode: none
+  kibana-genkeys:
+    profiles:
+      - setup
+    build:
+      context: kibana/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    command:
+      - bin/kibana-encryption-keys
+      - generate
+    network_mode: none
 
-    elasticsearch:
-      build:
-        context: elasticsearch/
-        args:
-          ELASTIC_VERSION: ${ELASTIC_VERSION}
-      volumes:
-        - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
-        - elasticsearch:/usr/share/elasticsearch/data:Z
-      ports:
-        - 9200:9200
-        - 9300:9300
-      environment:
-        node.name: elasticsearch
-        ES_JAVA_OPTS: -Xms1g -Xmx1g
-        ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
-        discovery.type: single-node
-      networks:
-        - elk
-      restart: unless-stopped
+  elasticsearch:
+    build:
+      context: elasticsearch/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+      - elasticsearch:/usr/share/elasticsearch/data:Z
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      node.name: elasticsearch
+      ES_JAVA_OPTS: -Xms1g -Xmx1g
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      discovery.type: single-node
+    networks:
+      - elk
+    restart: unless-stopped
 
-kibana:
+  kibana:
     build:
       context: kibana/
       args:
@@ -75,10 +75,10 @@ kibana:
       - elasticsearch
     restart: unless-stopped
 
-networks:
+  networks:
   elk:
     driver: bridge
 
 volumes:
-  elasticsearch:
-  
+elasticsearch:
+    
