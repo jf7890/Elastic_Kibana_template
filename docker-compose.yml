@@ -50,6 +50,7 @@ services:
       - 9200:9200
       - 9300:9300
     environment:
+      TZ: Asia/Ho_Chi_Minh
       node.name: elasticsearch
       ES_JAVA_OPTS: -Xms1g -Xmx1g
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
@@ -69,6 +70,7 @@ services:
       - 5601:5601
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      TZ: Asia/Ho_Chi_Minh
     networks:
       - elk
     depends_on:
