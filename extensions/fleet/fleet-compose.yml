@@ -29,8 +29,12 @@ services:
       # (a) Auto-enroll using basic authentication
       ELASTICSEARCH_USERNAME: elastic
       ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD:-}
+      FLEET_SERVER_INSECURE_HTTP: false
+      FLEET_SERVER_TLS_CERT: ${FLEET_SERVER_TLS_CERT}
+      FLEET_SERVER_TLS_KEY: ${FLEET_SERVER_TLS_KEY}
       # (b) Enroll using a pre-generated service token
       #FLEET_SERVER_SERVICE_TOKEN: <service_token>
+
     ports:
       - 8220:8220
     hostname: fleet-server
