@@ -17,10 +17,12 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
+      - type: bind 
+        source: ./certs
+        target: /etc/ssl/certs
     environment:
       TZ: Asia/Ho_Chi_Minh
       FLEET_SERVER_ENABLE: '1'
-      FLEET_SERVER_INSECURE_HTTP: '1'
       FLEET_SERVER_HOST: 0.0.0.0
       FLEET_SERVER_POLICY_ID: fleet-server-policy
       # Fleet plugin in Kibana
@@ -30,8 +32,9 @@ services:
       ELASTICSEARCH_USERNAME: elastic
       ELASTICSEARCH_PASSWORD: ${ELASTIC_PASSWORD:-}
       FLEET_SERVER_INSECURE_HTTP: false
-      FLEET_SERVER_TLS_CERT: ${FLEET_SERVER_TLS_CERT}
-      FLEET_SERVER_TLS_KEY: ${FLEET_SERVER_TLS_KEY}
+      # openssl req -x509 -newkey rsa:4096 -keyout fleet-server-key.pem -out fleet-server-cert.pem -days 365 -nodes 
+      FLEET_SERVER_TLS_CERT: /etc/ssl/certs/fleet-server-cert.pem
+      FLEET_SERVER_TLS_KEY: /etc/ssl/certs/fleet-server-key.pem
       # (b) Enroll using a pre-generated service token
       #FLEET_SERVER_SERVICE_TOKEN: <service_token>
 
