@@ -20,7 +20,7 @@ services:
     environment:
       TZ: Asia/Ho_Chi_Minh
       FLEET_ENROLL: '1'
-      FLEET_TOKEN_POLICY_NAME: Agent Policy APM Server
+      FLEET_TOKEN_POLICY_NAME: Fleet Server Policy
       FLEET_INSECURE: '1'
       FLEET_CA: /etc/ssl/certs/ca.crt
       FLEET_URL: https://fleet-server:8220
