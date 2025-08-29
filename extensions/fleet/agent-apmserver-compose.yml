@@ -16,7 +16,7 @@ services:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     volumes:
       - apm-server:/usr/share/elastic-agent/state:Z
-      - ./certs/ca.crt:/etc/ssl/certs/ca.crt
+      - ./certs:/etc/ssl/certs
     environment:
       TZ: Asia/Ho_Chi_Minh
       FLEET_ENROLL: '1'
