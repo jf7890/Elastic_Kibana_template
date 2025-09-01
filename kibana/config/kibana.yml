@@ -10,3 +10,7 @@ monitoring.ui.container.logstash.enabled: true
 elasticsearch.username: kibana_system
 elasticsearch.password: ${KIBANA_SYSTEM_PASSWORD}
 xpack.fleet.enabled: true
+server.ssl.enabled: true
+server.ssl.certificate: certs/kibana.crt
+server.ssl.key: certs/kibana.key
+elasticsearch.ssl.certificateAuthorities: certs/ca.crt
