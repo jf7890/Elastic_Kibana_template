@@ -39,6 +39,7 @@ services:
     network_mode: none
 
   elasticsearch:
+    container_name: elasticsearch
     build:
       context: elasticsearch/
       args:
@@ -61,6 +62,7 @@ services:
     restart: unless-stopped
 
   kibana:
+    container_name: kibana
     build:
       context: kibana/
       args:
