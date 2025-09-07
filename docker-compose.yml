@@ -46,7 +46,7 @@ services:
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
       - elasticsearch:/usr/share/elasticsearch/data:Z
-      - ./certs:/usr/share/elasticsearch/certs:Z 
+      - ./certs:/usr/share/elasticsearch/config/certs:Z 
     ports:
       - 9200:9200
       - 9300:9300
