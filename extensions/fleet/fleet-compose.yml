@@ -21,6 +21,7 @@ services:
     environment:
       TZ: Asia/Ho_Chi_Minh
       FLEET_SERVER_ENABLE: '1'
+      FLEET_ENROLLMENT_TOKEN: ${FLEET_ENROLLMENT_TOKEN}
       FLEET_SERVER_HOST: 0.0.0.0
       FLEET_SERVER_POLICY_ID: Fleet Server Policy
       FLEET_SERVER_KIBANA: https://kibana:5601
