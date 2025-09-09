@@ -16,5 +16,5 @@ elasticsearch.crt
     -f docker-compose.yml \
     -f extensions/fleet/fleet-compose.yml \
     -f extensions/fleet/agent-apmserver-compose.yml \
-     up
+     up -d 
 4. Create Fleet Enrollment Token
