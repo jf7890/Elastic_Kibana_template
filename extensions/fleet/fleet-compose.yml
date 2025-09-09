@@ -32,7 +32,7 @@ services:
       FLEET_SERVER_INSECURE_HTTP: false
       FLEET_SERVER_CERT: /etc/ssl/certs/fleet-server-cert.pem
       FLEET_SERVER_CERT_KEY: /etc/ssl/certs/fleet-server-key.pem
-      FLEET_SERVER_ELASTICSEARCH_CA: /etc/ssl/certs/ca.crt
+      FLEET_CA: /etc/ssl/certs/ca.crt
 
     ports:
       - 8220:8220
