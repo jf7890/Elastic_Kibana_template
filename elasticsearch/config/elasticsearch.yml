@@ -1,5 +1,7 @@
 cluster.name: docker-cluster
 network.host: 0.0.0.0
+node.name: elasticsearch
+discovery.type: single-node
 
 xpack.license.self_generated.type: trial
 xpack.security.enabled: true

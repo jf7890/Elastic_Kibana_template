@@ -52,10 +52,8 @@ services:
       - 9300:9300
     environment:
       TZ: Asia/Ho_Chi_Minh
-      node.name: elasticsearch
       ES_JAVA_OPTS: -Xms1g -Xmx1g
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
-      discovery.type: single-node
     networks:
       - elk
     restart: unless-stopped
