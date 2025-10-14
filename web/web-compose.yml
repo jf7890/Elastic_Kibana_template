@@ -21,4 +21,4 @@ services:
 
 networks:
   capstone-network:
-    external: true
+    external: bridge
