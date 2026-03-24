@@ -7,7 +7,7 @@ function log {
 
 # Log a message at a sub-level.
 function sublog {
-	echo "   ⠿ $1"
+	echo "   - $1"
 }
 
 # Log an error.
@@ -17,18 +17,40 @@ function err {
 
 # Log an error at a sub-level.
 function suberr {
-	echo "   ⠍ $1" >&2
+	echo "   ! $1" >&2
+}
+
+# Return the Elasticsearch base URL used by setup.
+function elasticsearch_url {
+	local elasticsearch_host="${ELASTICSEARCH_HOST:-elasticsearch}"
+	local elasticsearch_scheme="${ELASTICSEARCH_SCHEME:-https}"
+
+	echo "${elasticsearch_scheme}://${elasticsearch_host}:9200"
+}
+
+# Append the authentication and TLS flags required for Elasticsearch curl calls.
+function add_elasticsearch_curl_args {
+	local -n args_ref=$1
+	local elasticsearch_ca="${ELASTICSEARCH_CA:-/certs/ca.crt}"
+
+	if [[ -n "${ELASTIC_PASSWORD:-}" ]]; then
+		args_ref+=( '-u' "elastic:${ELASTIC_PASSWORD}" )
+	fi
+
+	if [[ -f "${elasticsearch_ca}" ]]; then
+		args_ref+=( '--cacert' "${elasticsearch_ca}" )
+	elif [[ "${ELASTICSEARCH_INSECURE:-0}" == "1" ]]; then
+		args_ref+=( '-k' )
+	fi
 }
 
 # Poll the 'elasticsearch' service until it responds with HTTP code 200.
 function wait_for_elasticsearch {
-	local elasticsearch_host="${ELASTICSEARCH_HOST:-elasticsearch}"
+	local elasticsearch_base_url
+	elasticsearch_base_url="$(elasticsearch_url)"
 
-	local -a args=( '-s' '-D-' '-m15' '-w' '%{http_code}' "http://${elasticsearch_host}:9200/" )
-
-	if [[ -n "${ELASTIC_PASSWORD:-}" ]]; then
-		args+=( '-u' "elastic:${ELASTIC_PASSWORD}" )
-	fi
+	local -a args=( '-s' '-D-' '-m15' '-w' '%{http_code}' "${elasticsearch_base_url}/" )
+	add_elasticsearch_curl_args args
 
 	local -i result=1
 	local output
@@ -59,13 +81,11 @@ function wait_for_elasticsearch {
 
 # Poll the Elasticsearch users API until it returns users.
 function wait_for_builtin_users {
-	local elasticsearch_host="${ELASTICSEARCH_HOST:-elasticsearch}"
+	local elasticsearch_base_url
+	elasticsearch_base_url="$(elasticsearch_url)"
 
-	local -a args=( '-s' '-D-' '-m15' "http://${elasticsearch_host}:9200/_security/user?pretty" )
-
-	if [[ -n "${ELASTIC_PASSWORD:-}" ]]; then
-		args+=( '-u' "elastic:${ELASTIC_PASSWORD}" )
-	fi
+	local -a args=( '-s' '-D-' '-m15' "${elasticsearch_base_url}/_security/user?pretty" )
+	add_elasticsearch_curl_args args
 
 	local -i result=1
 
@@ -108,15 +128,13 @@ function wait_for_builtin_users {
 function check_user_exists {
 	local username=$1
 
-	local elasticsearch_host="${ELASTICSEARCH_HOST:-elasticsearch}"
+	local elasticsearch_base_url
+	elasticsearch_base_url="$(elasticsearch_url)"
 
 	local -a args=( '-s' '-D-' '-m15' '-w' '%{http_code}'
-		"http://${elasticsearch_host}:9200/_security/user/${username}"
+		"${elasticsearch_base_url}/_security/user/${username}"
 		)
-
-	if [[ -n "${ELASTIC_PASSWORD:-}" ]]; then
-		args+=( '-u' "elastic:${ELASTIC_PASSWORD}" )
-	fi
+	add_elasticsearch_curl_args args
 
 	local -i result=1
 	local -i exists=0
@@ -144,18 +162,16 @@ function set_user_password {
 	local username=$1
 	local password=$2
 
-	local elasticsearch_host="${ELASTICSEARCH_HOST:-elasticsearch}"
+	local elasticsearch_base_url
+	elasticsearch_base_url="$(elasticsearch_url)"
 
 	local -a args=( '-s' '-D-' '-m15' '-w' '%{http_code}'
-		"http://${elasticsearch_host}:9200/_security/user/${username}/_password"
+		"${elasticsearch_base_url}/_security/user/${username}/_password"
 		'-X' 'POST'
 		'-H' 'Content-Type: application/json'
 		'-d' "{\"password\" : \"${password}\"}"
 		)
-
-	if [[ -n "${ELASTIC_PASSWORD:-}" ]]; then
-		args+=( '-u' "elastic:${ELASTIC_PASSWORD}" )
-	fi
+	add_elasticsearch_curl_args args
 
 	local -i result=1
 	local output
@@ -178,18 +194,16 @@ function create_user {
 	local password=$2
 	local role=$3
 
-	local elasticsearch_host="${ELASTICSEARCH_HOST:-elasticsearch}"
+	local elasticsearch_base_url
+	elasticsearch_base_url="$(elasticsearch_url)"
 
 	local -a args=( '-s' '-D-' '-m15' '-w' '%{http_code}'
-		"http://${elasticsearch_host}:9200/_security/user/${username}"
+		"${elasticsearch_base_url}/_security/user/${username}"
 		'-X' 'POST'
 		'-H' 'Content-Type: application/json'
 		'-d' "{\"password\":\"${password}\",\"roles\":[\"${role}\"]}"
 		)
-
-	if [[ -n "${ELASTIC_PASSWORD:-}" ]]; then
-		args+=( '-u' "elastic:${ELASTIC_PASSWORD}" )
-	fi
+	add_elasticsearch_curl_args args
 
 	local -i result=1
 	local output
@@ -211,18 +225,16 @@ function ensure_role {
 	local name=$1
 	local body=$2
 
-	local elasticsearch_host="${ELASTICSEARCH_HOST:-elasticsearch}"
+	local elasticsearch_base_url
+	elasticsearch_base_url="$(elasticsearch_url)"
 
 	local -a args=( '-s' '-D-' '-m15' '-w' '%{http_code}'
-		"http://${elasticsearch_host}:9200/_security/role/${name}"
+		"${elasticsearch_base_url}/_security/role/${name}"
 		'-X' 'POST'
 		'-H' 'Content-Type: application/json'
 		'-d' "$body"
 		)
-
-	if [[ -n "${ELASTIC_PASSWORD:-}" ]]; then
-		args+=( '-u' "elastic:${ELASTIC_PASSWORD}" )
-	fi
+	add_elasticsearch_curl_args args
 
 	local -i result=1
 	local output
